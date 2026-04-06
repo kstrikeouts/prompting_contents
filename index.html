@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATK 생성형 AI 프롬프트 가이드</title>
+    <title>ATK L&D 추천 프롬프트 영상 가이드</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -13,6 +13,7 @@
             --gradient-start: #007AFF;
             --gradient-mid: #A259FF;
             --gradient-end: #FF2D55;
+            --dubbing-color: #34d399;
         }
 
         body {
@@ -30,33 +31,22 @@
             background-clip: text;
         }
 
-        /* 단계별 섹션 스타일링 */
-        .step-container {
-            border-radius: 4rem;
-            padding: 4rem;
-            margin-bottom: 5rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .step-1-bg { background: linear-gradient(180deg, rgba(0, 122, 255, 0.05) 0%, rgba(0, 0, 0, 0) 100%); border-color: rgba(0, 122, 255, 0.2); }
-        .step-2-bg { background: linear-gradient(180deg, rgba(162, 89, 255, 0.05) 0%, rgba(0, 0, 0, 0) 100%); border-color: rgba(162, 89, 255, 0.2); }
-        .step-3-bg { background: linear-gradient(180deg, rgba(255, 45, 85, 0.05) 0%, rgba(0, 0, 0, 0) 100%); border-color: rgba(255, 45, 85, 0.2); }
-
         .glass-card {
             background: rgba(28, 28, 30, 0.6);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.4s cubic-bezier(0.2, 0, 0.2, 1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 100%;
-            cursor: pointer;
         }
 
         .glass-card:hover {
-            transform: translateY(-12px);
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.8);
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
         }
 
         .thumb-container {
@@ -64,9 +54,10 @@
             width: 100%;
             padding-bottom: 56.25%;
             overflow: hidden;
-            border-radius: 20px;
+            border-radius: 16px;
             background: #111;
-            margin-bottom: 0;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
         }
 
         .thumb-image {
@@ -79,21 +70,23 @@
             transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1);
         }
 
-        .glass-card:hover .thumb-image { transform: scale(1.08); }
+        .thumb-container:hover .thumb-image {
+            transform: scale(1.05);
+        }
 
         .thumb-duration {
             position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.8);
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
-            padding: 6px 14px;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
             font-weight: 800;
             color: #fff;
             z-index: 5;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .play-overlay {
@@ -102,342 +95,411 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.1);
+            background: rgba(0, 0, 0, 0.2);
             transition: background 0.3s ease;
         }
 
-        .glass-card:hover .play-overlay { background: rgba(0, 0, 0, 0.3); }
+        .thumb-container:hover .play-overlay {
+            background: rgba(0, 0, 0, 0.4);
+        }
 
         .play-button {
-            width: 70px;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.95);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-            transform: scale(0.9);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
-        .glass-card:hover .play-button { transform: scale(1.1); background: #fff; }
 
         .section-tag {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-weight: 900;
+            letter-spacing: 0.1em;
+            font-weight: 800;
             padding: 6px 16px;
             border-radius: 8px;
+            margin-bottom: 1rem;
             display: inline-block;
         }
+
         .tag-beginner { background: #007AFF; color: #fff; }
         .tag-intermediate { background: #A259FF; color: #fff; }
         .tag-expert { background: #FF2D55; color: #fff; }
 
         .dubbing-tag {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             background: rgba(52, 211, 153, 0.15);
-            color: #34d399;
+            color: var(--dubbing-color);
             font-weight: 800;
             padding: 6px 14px;
             border-radius: 8px;
-            margin-left: 8px;
+            margin-left: 10px;
+            margin-bottom: 1rem;
             display: inline-flex;
             align-items: center;
             border: 1px solid rgba(52, 211, 153, 0.3);
         }
 
-        /* 모달 스타일 */
+        .summary-title {
+            font-size: 1.1rem;
+            color: #ffffff;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .summary-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.6rem;
+            font-size: 1rem;
+            color: #e5e7eb;
+            line-height: 1.6;
+        }
+
+        .summary-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--gradient-mid);
+            font-weight: bold;
+        }
+
+        .btn-detail {
+            margin-top: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-detail:hover {
+            background: #fff;
+            color: #000;
+        }
+
         #modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.98);
-            backdrop-filter: blur(40px);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(25px);
+            z-index: 100;
             align-items: center;
             justify-content: center;
-            padding: 2vw;
+            padding: 20px;
         }
 
         #modal-content {
-            background: #111112;
+            background: #1c1c1e;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.8);
+        }
+
+        #video-player-area {
+            width: 100%;
+            background: #000;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #video-player-area iframe {
             width: 100%;
             height: 100%;
-            max-width: 1800px;
-            max-height: 95vh;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: grid;
-            grid-template-columns: 1.6fr 1fr;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 100px 200px -50px rgba(0, 0, 0, 1);
+            border: 0;
         }
 
-        @media (max-width: 1024px) {
-            #modal-content {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr;
-                overflow-y: auto;
-            }
-        }
-
-        #video-stage-pane { background: #000; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
-        #video-stage-pane iframe { width: 100%; height: 100%; border: 0; }
-
-        .yt-audio-link {
+        #fallback-link {
             position: absolute;
-            top: 30px;
-            left: 30px;
-            z-index: 1200;
-            background: rgba(255, 45, 85, 0.95);
+            bottom: 15px;
+            right: 15px;
+            z-index: 25;
+            font-size: 0.75rem;
+            background: rgba(255, 0, 0, 0.9);
             color: #fff;
-            padding: 12px 22px;
-            border-radius: 14px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 6px;
             font-weight: 800;
             text-decoration: none;
             display: none;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 10px 30px rgba(255, 45, 85, 0.4);
-            transition: all 0.3s;
+            transition: transform 0.2s;
         }
-        .yt-audio-link:hover { transform: translateY(-3px); background: #FF2D55; }
+        #fallback-link:hover { transform: scale(1.05); background: #ff0000; }
 
-        #info-pane { padding: 3rem; overflow-y: auto; background: #1c1c1e; border-left: 1px solid rgba(255, 255, 255, 0.1); }
-
-        .btn-close-modal {
+        #modal-close {
             position: absolute;
-            top: 25px;
-            right: 25px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            width: 50px;
-            height: 50px;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1300;
-            transition: all 0.3s;
+            z-index: 30;
+            color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 1.4rem;
-        }
-        .btn-close-modal:hover { background: #ff2d55; transform: rotate(90deg); border-color: transparent; }
-
-        /* 요약 내용 텍스트 스타일 */
-        .detail-summary-box h3 { color: #fff; font-weight: 900; font-size: 1.75rem; margin-bottom: 1.5rem; border-left: 6px solid var(--gradient-mid); padding-left: 1.2rem; line-height: 1.1; }
-        .detail-summary-box h4 { color: #fff; font-weight: 800; font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; }
-        .detail-summary-box p { color: #d1d1d6; margin-bottom: 0.8rem; line-height: 1.6; font-size: 1.05rem; }
-        .detail-summary-box ul { list-style: none; padding: 0; margin-bottom: 1.2rem; }
-        .detail-summary-box li { margin-bottom: 0.4rem; padding-left: 1.5rem; position: relative; color: #e5e7eb; font-size: 1rem; line-height: 1.5; }
-        .detail-summary-box li::before { content: "→"; position: absolute; left: 0; color: var(--gradient-start); font-weight: 900; }
-        
-        .time-link { cursor: pointer; display: inline-block; }
-        .time-badge { 
-            font-family: 'Inter', monospace; 
-            color: #007AFF; 
-            font-weight: 800; 
-            font-size: 0.9rem; 
-            background: rgba(0, 122, 255, 0.12); 
-            padding: 2px 8px; 
-            border-radius: 6px; 
-            border: 1px solid rgba(0, 122, 255, 0.2);
             transition: all 0.2s;
         }
-        .time-link:hover .time-badge { background: #007AFF; color: #fff; transform: scale(1.05); }
+        #modal-close:hover { background: var(--gradient-end); border-color: transparent; }
 
-        .audio-notice-box {
-            background: rgba(0, 122, 255, 0.1);
+        .detail-summary-box { padding: 2.5rem; }
+        .detail-summary-box h3 { color: #fff; font-weight: 800; font-size: 1.6rem; margin-bottom: 1.25rem; border-left: 5px solid var(--gradient-mid); padding-left: 1.25rem; }
+        .detail-summary-box h4 { color: #fff; font-weight: 700; font-size: 1.25rem; margin-top: 2.25rem; margin-bottom: 1rem; }
+        .detail-summary-box p { color: #d1d1d6; margin-bottom: 1.25rem; line-height: 1.8; font-size: 1.05rem; }
+        .detail-summary-box ul { list-style: none; padding: 0; margin-bottom: 1.75rem; }
+        .detail-summary-box li { margin-bottom: 0.85rem; padding-left: 1.75rem; position: relative; color: #e5e7eb; font-size: 1rem; line-height: 1.6; }
+        .detail-summary-box li::before { content: "→"; position: absolute; left: 0; color: var(--gradient-start); font-weight: 900; }
+        
+        .time-link { cursor: pointer; display: inline-block; margin: 0 2px; }
+        .time-badge { 
+            font-family: 'Inter', monospace; 
+            color: var(--gradient-start); 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            background: rgba(0, 122, 255, 0.15); 
+            padding: 2px 8px; 
+            border-radius: 6px; 
+            transition: all 0.2s;
             border: 1px solid rgba(0, 122, 255, 0.3);
-            color: #007AFF;
-            padding: 15px 20px;
-            border-radius: 16px;
-            font-size: 0.95rem;
-            margin-bottom: 25px;
-            font-weight: 600;
-            line-height: 1.6;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .time-link:hover .time-badge {
+            background: var(--gradient-start);
+            color: #fff;
+            transform: translateY(-2px);
         }
 
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; border: 3px solid #1c1c1e; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body class="antialiased">
 
     <!-- Header -->
-    <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 h-24">
-        <div class="max-w-[1600px] mx-auto px-10 flex items-center justify-between h-full">
-            <a href="https://amkor.sharepoint.com/sites/ATK_LND/SitePages/TrainingHome.aspx" target="_blank" class="text-2xl md:text-3xl font-black tracking-tighter text-gray-200 hover:text-blue-500 transition">
-                Learning & Development
-            </a>
-            <div class="flex items-center">
-                <a href="https://amkor.sharepoint.com/sites/ATK_LND/SitePages/TrainingHome.aspx" target="_blank" class="transition transform hover:scale-105 active:scale-95">
-                    <img src="https://daoift3qrrnil.cloudfront.net/company_groups/images/000/004/293/original/315_222.png?1684486597" 
-                         alt="Amkor Technology" 
-                         class="h-20 md:h-24 brightness-0 invert object-contain">
+    <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
+            <div class="text-xl md:text-2xl font-bold tracking-tighter text-gray-200">Learning & Development</div>
+            <div class="flex items-center space-x-6">
+                <a href="https://amkor.com/kr/" target="_blank" class="transition transform hover:scale-105 active:scale-95">
+                    <img src="https://daoift3qrrnil.cloudfront.net/company_groups/images/000/004/293/original/315_222.png?1684486597" alt="Amkor Technology Korea" class="h-12 md:h-16 object-contain brightness-0 invert">
                 </a>
             </div>
         </div>
     </nav>
 
     <!-- Hero -->
-    <header class="pt-64 pb-24 px-6 text-center">
-        <div class="max-w-5xl mx-auto">
-            <h1 class="text-5xl md:text-8xl font-black mb-8 leading-tight tracking-tighter">
-                🚀 <span class="text-gradient">생성형 AI 프롬프트</span><br>엔지니어링 추천 영상
+    <header class="pt-48 pb-16 px-6 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-8xl font-black mb-6 leading-tight tracking-tighter">
+                🚀 <span class="text-gradient">프롬프트 마스터</span><br>커리큘럼
             </h1>
-            <p class="text-xl md:text-3xl text-gray-400 font-light max-w-4xl mx-auto leading-relaxed">
-                MS Copilot 및 AI 프롬프팅 마스터를 위한 L&D팀 엄선 가이드입니다.😁
+            <p class="text-lg md:text-2xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed">
+                MS Copilot Prompting 영상, 뭘 봐야할지 막막하신가요?<br class="hidden md:block">
+                L&D팀에서 여러분의 소중한 시간을 위해 추천 영상을 가져왔습니다.😁
             </p>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-[1500px] mx-auto px-10 pb-48 space-y-20">
-        
-        <!-- Step 1 Section -->
-        <section class="step-container step-1-bg">
-            <div class="flex items-center mb-12">
-                <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mr-6 shadow-lg shadow-blue-500/30">
-                    <span class="text-3xl font-black text-white">1</span>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-black text-blue-400">Step 1. 기초 다지기</h2>
+    <main class="max-w-7xl mx-auto px-6 pb-32 space-y-24">
+
+        <!-- Step 1 -->
+        <section id="beginner">
+            <div class="mb-10">
+                <h2 class="text-4xl md:text-5xl font-black mb-3 text-gradient inline-block">Step 1. 기초 다지기</h2>
+                <div class="h-1.5 w-24 bg-blue-500 rounded-full"></div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div class="glass-card rounded-[3.5rem] p-10" onclick="openPlayer('xaCdAFyQ3_w')">
-                    <div class="flex items-center flex-wrap mb-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- Card 1 -->
+                <div class="glass-card rounded-[2rem] p-10">
+                    <div class="flex items-center flex-wrap mb-2">
                         <span class="section-tag tag-beginner">Beginner</span>
                         <span class="dubbing-tag">한국어 더빙 지원</span>
                     </div>
-                    <div class="thumb-container group mb-8">
-                        <img src="https://img.youtube.com/vi/xaCdAFyQ3_w/maxresdefault.jpg" class="thumb-image">
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">무료 버전 코파일럿 완벽 가이드</h3>
+                    <div class="thumb-container group" onclick="openPlayer('xaCdAFyQ3_w')">
+                        <img src="https://img.youtube.com/vi/xaCdAFyQ3_w/maxresdefault.jpg" alt="Thumbnail" class="thumb-image">
                         <div class="thumb-duration">약 10분</div>
-                        <div class="play-overlay"><div class="play-button"><svg width="30" height="30" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                        <div class="play-overlay"><div class="play-button"><svg width="24" height="24" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
                     </div>
-                    <h3 class="text-3xl font-bold px-4 leading-tight">무료 버전 코파일럿 완벽 가이드</h3>
-                    <p class="text-gray-400 mt-4 px-4 font-medium">Copilot의 기본 접속법부터 문서 분석, 이미지 생성까지 기초 핵심 요약</p>
+                    <div class="mt-4 mb-6">
+                        <h4 class="summary-title">핵심 요약</h4>
+                        <ul class="summary-list">
+                            <li>무료 기능 활용: 음성 대화, 이미지 생성, 문서 분석법.</li>
+                            <li>프롬프트 5대 요소: 역할, 목표, 맥락, 기대사항, 출처 설정.</li>
+                            <li>로그인의 중요성: 대화 기록 저장 및 계정 연동.</li>
+                        </ul>
+                    </div>
+                    <button class="btn-detail" onclick="openPlayer('xaCdAFyQ3_w')">요약 상세 보기</button>
                 </div>
-
-                <div class="glass-card rounded-[3.5rem] p-10" onclick="openPlayer('p6hH7Mhg7d0')">
-                    <div class="flex items-center mb-6">
-                        <span class="section-tag tag-beginner">Beginner</span>
-                    </div>
-                    <div class="thumb-container group mb-8">
-                        <img src="https://img.youtube.com/vi/p6hH7Mhg7d0/maxresdefault.jpg" class="thumb-image">
+                <!-- Card 2 -->
+                <div class="glass-card rounded-[2rem] p-10">
+                    <div class="flex items-center mb-2"><span class="section-tag tag-beginner">Beginner</span></div>
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">코파일럿 프롬프팅 꿀팁 6가지</h3>
+                    <div class="thumb-container group" onclick="openPlayer('p6hH7Mhg7d0')">
+                        <img src="https://img.youtube.com/vi/p6hH7Mhg7d0/maxresdefault.jpg" alt="Thumbnail" class="thumb-image">
                         <div class="thumb-duration">약 21분</div>
-                        <div class="play-overlay"><div class="play-button"><svg width="30" height="30" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                        <div class="play-overlay"><div class="play-button"><svg width="24" height="24" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
                     </div>
-                    <h3 class="text-3xl font-bold px-4 leading-tight">코파일럿 프롬프팅 꿀팁 6가지</h3>
-                    <p class="text-gray-400 mt-4 px-4 font-medium">단순 지시를 넘어 구체적인 맥락과 페르소나를 활용하는 법</p>
+                    <div class="mt-4 mb-6">
+                        <h4 class="summary-title">핵심 요약</h4>
+                        <ul class="summary-list">
+                            <li>맥락(Context) 중심: 단순 지시가 아닌 상황과 역할 제공.</li>
+                            <li>이모지 효과: 답변의 상세도를 높이는 팁.</li>
+                            <li>기업용 보안: 사내 데이터 연동 시 보안 처리 방법.</li>
+                        </ul>
+                    </div>
+                    <button class="btn-detail" onclick="openPlayer('p6hH7Mhg7d0')">요약 상세 보기</button>
                 </div>
             </div>
         </section>
 
-        <!-- Step 2 Section -->
-        <section class="step-container step-2-bg">
-            <div class="flex items-center mb-12">
-                <div class="w-16 h-16 bg-purple-500 rounded-2xl flex items-center justify-center mr-6 shadow-lg shadow-purple-500/30">
-                    <span class="text-3xl font-black text-white">2</span>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-black text-purple-400">Step 2. 실전 및 심화</h2>
+        <!-- Step 2 -->
+        <section id="intermediate">
+            <div class="mb-10">
+                <h2 class="text-4xl md:text-5xl font-black mb-3 text-gradient inline-block">Step 2. 실전 및 심화</h2>
+                <div class="h-1.5 w-24 bg-purple-500 rounded-full"></div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div class="glass-card rounded-[3.5rem] p-10" onclick="openPlayer('B2s1oB36iCQ')">
-                    <div class="flex items-center flex-wrap mb-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- Card 3 -->
+                <div class="glass-card rounded-[2rem] p-10">
+                    <div class="flex items-center flex-wrap mb-2">
                         <span class="section-tag tag-intermediate">Intermediate</span>
                         <span class="dubbing-tag">한국어 더빙 지원</span>
                     </div>
-                    <div class="thumb-container group mb-8">
-                        <img src="https://img.youtube.com/vi/B2s1oB36iCQ/maxresdefault.jpg" class="thumb-image">
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">15가지 생산성 팁 (2026)</h3>
+                    <div class="thumb-container group" onclick="openPlayer('B2s1oB36iCQ')">
+                        <img src="https://img.youtube.com/vi/B2s1oB36iCQ/maxresdefault.jpg" alt="Thumbnail" class="thumb-image">
                         <div class="thumb-duration">약 24분</div>
-                        <div class="play-overlay"><div class="play-button"><svg width="30" height="30" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                        <div class="play-overlay"><div class="play-button"><svg width="24" height="24" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
                     </div>
-                    <h3 class="text-3xl font-bold px-4 leading-tight">2026년 기준, 꼭 활용해야 할 코파일럿 팁 15가지</h3>
-                    <p class="text-gray-400 mt-4 px-4 font-medium">Outlook, Excel, Teams 등 오피스 프로그램 실전 생산성 극대화</p>
+                    <div class="mt-4 mb-6">
+                        <h4 class="summary-title">핵심 요약</h4>
+                        <ul class="summary-list">
+                            <li>프롬프트 스케줄링 및 엑셀 함수 활용.</li>
+                            <li class="font-bold text-blue-400">일반/프리미엄 기능 구분 설명 포함</li>
+                        </ul>
+                    </div>
+                    <button class="btn-detail" onclick="openPlayer('B2s1oB36iCQ')">요약 상세 보기</button>
                 </div>
-
-                <div class="glass-card rounded-[3.5rem] p-10" onclick="openPlayer('EZqY_mnHfTI')">
-                    <div class="flex items-center mb-6">
-                        <span class="section-tag tag-intermediate">Intermediate</span>
-                    </div>
-                    <div class="thumb-container group mb-8">
-                        <img src="https://img.youtube.com/vi/EZqY_mnHfTI/maxresdefault.jpg" class="thumb-image">
+                <!-- Card 4 -->
+                <div class="glass-card rounded-[2rem] p-10">
+                    <div class="flex items-center mb-2"><span class="section-tag tag-intermediate">Intermediate</span></div>
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">프롬프트 엔지니어링 기법 총정리</h3>
+                    <div class="thumb-container group" onclick="openPlayer('EZqY_mnHfTI')">
+                        <img src="https://img.youtube.com/vi/EZqY_mnHfTI/maxresdefault.jpg" alt="Thumbnail" class="thumb-image">
                         <div class="thumb-duration">약 37분</div>
-                        <div class="play-overlay"><div class="play-button"><svg width="30" height="30" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                        <div class="play-overlay"><div class="play-button"><svg width="24" height="24" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
                     </div>
-                    <h3 class="text-3xl font-bold px-4 leading-tight">프롬프트 엔지니어링 기법 총정리</h3>
-                    <p class="text-gray-400 mt-4 px-4 font-medium">LLM 모델 작동 원리와 Zero-shot부터 ReAct까지의 기술적 접근</p>
+                    <div class="mt-4 mb-6">
+                        <h4 class="summary-title">핵심 요약</h4>
+                        <ul class="summary-list">
+                            <li>온도 설정 및 COT, ReAct 등 고급 추론 기법.</li>
+                            <li>부정문보다 긍정문 사용의 중요성.</li>
+                        </ul>
+                    </div>
+                    <button class="btn-detail" onclick="openPlayer('EZqY_mnHfTI')">요약 상세 보기</button>
                 </div>
             </div>
         </section>
 
-        <!-- Step 3 Section -->
-        <section class="step-container step-3-bg">
-            <div class="flex items-center mb-12">
-                <div class="w-16 h-16 bg-red-500 rounded-2xl flex items-center justify-center mr-6 shadow-lg shadow-red-500/30">
-                    <span class="text-3xl font-black text-white">3</span>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-black text-red-400">Step 3. 마스터 클래스</h2>
+        <!-- Step 3 -->
+        <section id="expert">
+            <div class="mb-10">
+                <h2 class="text-4xl md:text-5xl font-black mb-3 text-gradient inline-block">Step 3. 마스터 클래스</h2>
+                <div class="h-1.5 w-24 bg-red-500 rounded-full"></div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div class="glass-card rounded-[3.5rem] p-10" onclick="openPlayer('zs5_XRdcvbk')">
-                    <div class="flex items-center mb-6">
-                        <span class="section-tag tag-expert">Expert</span>
-                    </div>
-                    <div class="thumb-container group mb-8">
-                        <img src="https://img.youtube.com/vi/zs5_XRdcvbk/maxresdefault.jpg" class="thumb-image">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- Card 5 -->
+                <div class="glass-card rounded-[2rem] p-10 border-t-2 border-red-500/30">
+                    <div class="flex items-center mb-2"><span class="section-tag tag-expert">Expert</span></div>
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">상위 0.1% 사고형 AI 활용법</h3>
+                    <div class="thumb-container group" onclick="openPlayer('zs5_XRdcvbk')">
+                        <img src="https://img.youtube.com/vi/zs5_XRdcvbk/maxresdefault.jpg" alt="Thumbnail" class="thumb-image">
                         <div class="thumb-duration">약 7분</div>
-                        <div class="play-overlay"><div class="play-button"><svg width="30" height="30" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                        <div class="play-overlay"><div class="play-button"><svg width="24" height="24" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
                     </div>
-                    <h3 class="text-3xl font-bold px-4 leading-tight">상위 0.1% 사고형 AI 활용법</h3>
-                    <p class="text-gray-400 mt-4 px-4 font-medium">ToT(생각의 트리), 자기 성찰 등 고도화된 추론 프롬프팅</p>
+                    <div class="mt-4 mb-6">
+                        <h4 class="summary-title">핵심 요약</h4>
+                        <ul class="summary-list">
+                            <li>생각의 트리(ToT) 및 자기 성찰 기법.</li>
+                            <li>메타 프롬프팅으로 프롬프트 역설계하기.</li>
+                        </ul>
+                    </div>
+                    <button class="btn-detail" onclick="openPlayer('zs5_XRdcvbk')">요약 상세 보기</button>
                 </div>
-
-                <div class="glass-card rounded-[3.5rem] p-10" onclick="openPlayer('ilNf1-wwITU')">
-                    <div class="flex items-center flex-wrap mb-6">
+                <!-- Card 6 -->
+                <div class="glass-card rounded-[2rem] p-10 border-t-2 border-red-500/30">
+                    <div class="flex items-center flex-wrap mb-2">
                         <span class="section-tag tag-expert">Expert</span>
                         <span class="dubbing-tag">한국어 더빙 지원</span>
                     </div>
-                    <div class="thumb-container group mb-8">
-                        <img src="https://img.youtube.com/vi/ilNf1-wwITU/maxresdefault.jpg" class="thumb-image">
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">프롬프트 코치 마스터클래스</h3>
+                    <div class="thumb-container group" onclick="openPlayer('ilNf1-wwITU')">
+                        <img src="https://img.youtube.com/vi/ilNf1-wwITU/maxresdefault.jpg" alt="Thumbnail" class="thumb-image">
                         <div class="thumb-duration">약 15분</div>
-                        <div class="play-overlay"><div class="play-button"><svg width="30" height="30" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                        <div class="play-overlay"><div class="play-button"><svg width="24" height="24" fill="#000" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
                     </div>
-                    <h3 class="text-3xl font-bold px-4 leading-tight">프롬프트 코치 마스터클래스</h3>
-                    <p class="text-gray-400 mt-4 px-4 font-medium">Microsoft 에이전트 기능을 활용해 나만의 프롬프트 코치 만드는 법</p>
+                    <div class="mt-4 mb-6">
+                        <h4 class="summary-title">핵심 요약</h4>
+                        <ul class="summary-list">
+                            <li>프롬프트 코치 에이전트로 질문 교정받기.</li>
+                            <li>전문가 역할 전환 및 프롬프트 저장 기능.</li>
+                        </ul>
+                    </div>
+                    <button class="btn-detail" onclick="openPlayer('ilNf1-wwITU')">요약 상세 보기</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Modal Area -->
+    <!-- Modal Overlay -->
     <div id="modal-overlay" onclick="closePlayer()">
-        <div class="btn-close-modal" onclick="closePlayer()">✕</div>
         <div id="modal-content" onclick="event.stopPropagation()">
-            <div id="video-stage-pane">
-                <a id="yt-external-btn" href="#" target="_blank" class="yt-audio-link">
-                    <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-                    YouTube에서 한국어로 시청
-                </a>
-                <div id="iframe-slot" style="width:100%; height:100%;"></div>
+            <div id="modal-close" onclick="closePlayer()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </div>
-            <div id="info-pane">
-                <div id="modal-body" class="detail-summary-box"></div>
+            
+            <div id="video-player-area">
+                <!-- Video iframe -->
+                <a id="fallback-link" href="#" target="_blank">재생 오류 시: 유튜브에서 직접 보기</a>
+            </div>
+
+            <div id="modal-body" class="detail-summary-box">
+                <!-- Summary content -->
             </div>
         </div>
     </div>
 
-    <footer class="py-32 border-t border-white/5 text-center bg-black">
+    <!-- Footer -->
+    <footer class="py-24 border-t border-white/5 text-center bg-black">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="text-3xl font-black mb-6 text-white/20 tracking-tighter italic">Amkor Technology Korea</div>
-            <p class="text-gray-500 font-light">본 가이드는 Amkor Technology Korea L&D팀에서 제작하였습니다.</p>
+            <div class="text-2xl font-black mb-4 text-white/20 tracking-tighter italic">Amkor Technology Korea</div>
+            <p class="text-gray-500 font-light">본 페이지는 L&D팀에서 선정한 프롬프트 학습용 추천 영상 가이드입니다.</p>
         </div>
     </footer>
 
@@ -445,246 +507,174 @@
         const videoData = {
             'xaCdAFyQ3_w': {
                 title: "무료 버전 코파일럿 완벽 가이드",
-                hasKoreanAudio: true,
                 summary: `
-                    <div class="audio-notice-box">🤖한국어 음성을 지원하는 영상입니다. 만약 한국어 음성이 재생되지 않는다면 영상 하단 유튜브 로고를 통해 새창에서 유튜브 설정(⚙️), 오디오 트랙에서 한국어를 선택해주세요.</div>
-                    <h3>[무료 버전 코파일럿 완벽 가이드]</h3>
+                    <h3>강의 상세 요약</h3>
+                    <p>이 영상은 마이크로소프트의 AI 비서인 Copilot(코파일럿) 무료 버전의 주요 기능과 효과적인 사용법을 정리한 튜토리얼입니다. 주요 내용을 요약해 드립니다.</p>
                     <h4>1. 기본 시작하기</h4>
-                    <p>접속 및 로그인: copilot.microsoft.com에서 바로 시작할 수 있습니다. <a class="time-link" onclick="seek(59)"><span class="time-badge">[00:59]</span></a></p>
-                    <p>로그인의 중요성: 로그인 없이도 사용 가능하지만, 마이크로소프트 계정으로 로그인하면 대화 기록이 저장되어 다른 기기에서도 이어서 대화할 수 있습니다. <a class="time-link" onclick="seek(144)"><span class="time-badge">[02:24]</span></a></p>
-                    <p>대화 흐름: 이전 질문의 맥락을 기억하므로 후속 질문을 통해 정보를 구체화할 수 있으며, '새 채팅' 버튼을 누르면 문맥을 초기화할 수 있습니다. <a class="time-link" onclick="seek(102)"><span class="time-badge">[01:42]</span></a></p>
-                    <h4>2. 주요 기능</h4>
-                    <p>정보 검색 및 답변: 인터넷 정보를 기반으로 답변을 제공하며, 정보의 정확성을 확인할 수 있도록 출처(Citation) 링크를 함께 제공합니다. <a class="time-link" onclick="seek(188)"><span class="time-badge">[03:08]</span></a></p>
-                    <p>음성 대화: 마이크 버튼을 눌러 말로 질문하고 음성으로 답변을 들을 수 있는 핸즈프리 기능을 지원합니다. <a class="time-link" onclick="seek(223)"><span class="time-badge">[03:43]</span></a></p>
-                    <p>콘텐츠 생성: 이메일 드래프트 작성 등 텍스트 생성뿐만 아니라, 이미지 생성도 가능합니다. 생성된 이미지는 후속 명령어로 수정하거나 사진 라이브러리에 저장할 수 있습니다. <a class="time-link" onclick="seek(274)"><span class="time-badge">[04:34]</span></a></p>
-                    <p>파일 분석: 이미지나 문서(예: 엑셀 스프레드시트)를 업로드하여 데이터를 분석하거나 요약해달라고 요청할 수 있습니다. <a class="time-link" onclick="seek(361)"><span class="time-badge">[06:01]</span></a></p>
-                    <h4>3. 효과적인 프롬프트 작성법 (프롬프트 엔지니어링)</h4>
-                    <p>단순한 질문보다 구체적인 구성 요소를 포함할 때 더 좋은 답변을 얻을 수 있습니다. <a class="time-link" onclick="seek(457)"><span class="time-badge">[07:37]</span></a></p>
                     <ul>
-                        <li>역할(Role): "20년 경력의 도시 개발자로서 답변해줘"와 같이 페르소나 부여.</li>
-                        <li>목표(Goal): 무엇을 달성하고 싶은지 명확히 기술.</li>
-                        <li>맥락(Context): 특정 지역, 예산, 제약 사항 등 배경 정보 제공.</li>
-                        <li>기대 사항(Expectations): 답변의 톤이나 형식 지정.</li>
-                        <li>소스(Sources): 참고해야 할 특정 웹사이트나 문서 명시.</li>
+                        <li><strong>접속 및 로그인:</strong> copilot.microsoft.com에서 바로 시작할 수 있습니다. <a class="time-link" onclick="seek(59)"><span class="time-badge">00:59</span></a></li>
+                        <li><strong>로그인의 중요성:</strong> 계정 로그인 시 대화 기록 저장 및 기기 간 연동 가능. <a class="time-link" onclick="seek(144)"><span class="time-badge">02:24</span></a></li>
+                        <li><strong>대화 흐름:</strong> 이전 질문의 맥락을 기억하며, '새 채팅'으로 초기화 가능. <a class="time-link" onclick="seek(102)"><span class="time-badge">01:42</span></a></li>
+                    </ul>
+                    <h4>2. 주요 기능</h4>
+                    <ul>
+                        <li><strong>정보 검색 및 답변:</strong> 출처 링크를 함께 제공하여 정확성 확인 지원. <a class="time-link" onclick="seek(188)"><span class="time-badge">03:08</span></a></li>
+                        <li><strong>음성 대화:</strong> 핸즈프리 기능을 통한 음성 질의응답 지원. <a class="time-link" onclick="seek(223)"><span class="time-badge">03:43</span></a></li>
+                        <li><strong>콘텐츠 생성:</strong> 텍스트 드래프트 및 DALL-E 기반 이미지 생성. <a class="time-link" onclick="seek(274)"><span class="time-badge">04:34</span></a></li>
+                        <li><strong>파일 분석:</strong> 이미지나 엑셀 문서를 업로드하여 데이터 분석. <a class="time-link" onclick="seek(361)"><span class="time-badge">06:01</span></a></li>
+                    </ul>
+                    <h4>3. 효과적인 프롬프트 작성법 (프롬프트 엔지니어링)</h4>
+                    <p>단순한 질문보다 구체적인 구성 요소를 포함할 때 더 좋은 답변을 얻을 수 있습니다. <a class="time-link" onclick="seek(457)"><span class="time-badge">07:37</span></a></p>
+                    <ul>
+                        <li><strong>역할(Role):</strong> "20년 경력의 도시 개발자로서 답변해줘"와 같이 페르소나 부여.</li>
+                        <li><strong>목표(Goal):</strong> 무엇을 달성하고 싶은지 명확히 기술.</li>
+                        <li><strong>맥락(Context):</strong> 특정 지역, 예산, 제약 사항 등 배경 정보 제공.</li>
+                        <li><strong>기대 사항(Expectations):</strong> 답변의 톤이나 형식 지정.</li>
+                        <li><strong>소스(Sources):</strong> 참고해야 할 특정 웹사이트나 문서가 있다면 명시.</li>
                     </ul>
                     <h4>4. 주의사항</h4>
-                    <p>Copilot은 인터넷 정보를 사용하므로 항상 100% 정확하지는 않습니다. 중요한 연구라면 반드시 제공된 출처를 직접 확인해야 합니다. <a class="time-link" onclick="seek(188)"><span class="time-badge">[03:08]</span></a></p>
-                    <p>무료 버전과 유료(Microsoft 365) 버전은 기능 차이가 있을 수 있으며, 인터페이스와 기능은 지속적으로 업데이트됩니다. <a class="time-link" onclick="seek(624)"><span class="time-badge">[10:24]</span></a></p>
+                    <ul>
+                        <li>Copilot은 인터넷 정보를 사용하므로 항상 100% 정확하지는 않습니다. 출처를 직접 확인해야 합니다. <a class="time-link" onclick="seek(188)"><span class="time-badge">03:08</span></a></li>
+                        <li>무료 버전과 유료 버전은 기능 차이가 있을 수 있으며 지속적으로 업데이트됩니다. <a class="time-link" onclick="seek(624)"><span class="time-badge">10:24</span></a></li>
+                    </ul>
                 `
             },
             'p6hH7Mhg7d0': {
                 title: "코파일럿 프롬프팅 꿀팁 6가지",
                 summary: `
-                    <h3>[코파일럿 프롬프팅 꿀팁 6가지]</h3>
-                    <p>이 영상은 <strong>마이크로소프트 코파일럿(Copilot)</strong>을 업무와 일상에서 더욱 효과적으로 활용하기 위한 6가지 프롬프트 꿀팁을 상세히 소개하고 있습니다.</p>
-                    <p>주요 내용을 요약해 드립니다.</p>
+                    <h3>상세 내용 요약</h3>
+                    <p>이 영상은 <strong>마이크로소프트 코파일럿(Copilot)</strong>을 효과적으로 활용하기 위한 6가지 프롬프트 꿀팁을 소개합니다. 주요 내용을 요약해 드립니다.</p>
                     <h4>1. 코파일럿의 특징 및 장점</h4>
-                    <p>기업용 최적화: 워드, 엑셀, 파워포인트 등 MS 365 앱에 내장되어 있으며, 기업 내부 데이터(원드라이브 등)와 연동하여 보안 문서 작업이 가능합니다. <a class="time-link" onclick="seek(33)"><span class="time-badge">[00:33]</span></a>, <a class="time-link" onclick="seek(271)"><span class="time-badge">[04:31]</span></a></p>
-                    <p>답변의 투명성: 답변의 근거가 되는 웹사이트 링크(출처)를 제공하여 신뢰성을 높입니다. <a class="time-link" onclick="seek(184)"><span class="time-badge">[03:04]</span></a></p>
-                    <p>사용자 인터페이스(UI): 답변 후 사용자가 다음에 질문할 법한 내용을 추천해주는 기능을 제공합니다. <a class="time-link" onclick="seek(206)"><span class="time-badge">[03:26]</span></a></p>
-                    <h4>2. 코파일럿 활용 6가지 꿀팁 (프롬프트 엔지니어링)</h4>
-                    <p>더 나은 답변을 얻기 위해 다음 요소들을 프롬프트에 포함하는 것이 중요합니다. <a class="time-link" onclick="seek(530)"><span class="time-badge">[08:50]</span></a></p>
                     <ul>
-                        <li>간결하고 구체적으로 작성: 본론을 명확히 전달해야 답변의 질이 올라갑니다. <a class="time-link" onclick="seek(572)"><span class="time-badge">[09:32]</span></a></li>
-                        <li>맥락(Context)과 디테일 제공: 단순히 "해줘"가 아니라 상황 정보를 많이 줄수록 차별화된 답변이 나옵니다. <a class="time-link" onclick="seek(679)"><span class="time-badge">[11:19]</span></a></li>
-                        <li>역할(Role)과 페르소나 부여: "전문가처럼" 등 역할을 지정하면 톤앤매너가 조정됩니다. <a class="time-link" onclick="seek(975)"><span class="time-badge">[16:15]</span></a></li>
-                        <li>톤앤매너 및 출력 형식 지정: 개요 형태, JSON 등 원하는 형식을 명시하세요. <a class="time-link" onclick="seek(996)"><span class="time-badge">[16:36]</span></a></li>
-                        <li>공손한 표현: <strong>이모지(😊)</strong>를 사용하면 답변의 뎁스가 깊어지는 경향이 있습니다. <a class="time-link" onclick="seek(1060)"><span class="time-badge">[17:40]</span></a>, <a class="time-link" onclick="seek(1099)"><span class="time-badge">[18:19]</span></a></li>
-                        <li>예제(Few-shot) 및 기억 연상법 활용: 예시를 제공하여 결과물의 품질을 높입니다. <a class="time-link" onclick="seek(1158)"><span class="time-badge">[19:18]</span></a></li>
+                        <li><strong>기업용 최적화:</strong> 워드, 엑셀, PPT 등 MS 365 앱 내장 및 기업 데이터 연동. <a class="time-link" onclick="seek(33)"><span class="time-badge">00:33</span></a>, <a class="time-link" onclick="seek(271)"><span class="time-badge">04:31</span></a></li>
+                        <li><strong>답변의 투명성:</strong> 답변 근거 웹사이트 링크(출처) 제공. <a class="time-link" onclick="seek(184)"><span class="time-badge">03:04</span></a></li>
+                        <li><strong>사용자 인터페이스(UI):</strong> 다음에 질문할 내용을 추천해주는 기능. <a class="time-link" onclick="seek(206)"><span class="time-badge">03:26</span></a></li>
+                    </ul>
+                    <h4>2. 코파일럿 활용 6가지 꿀팁</h4>
+                    <ul>
+                        <li><strong>간결하고 구체적으로:</strong> 본론을 명확히 전달해야 답변 질이 올라갑니다. <a class="time-link" onclick="seek(572)"><span class="time-badge">09:32</span></a></li>
+                        <li><strong>맥락과 디테일:</strong> 독자가 누구인지 상황 정보를 많이 줄수록 좋습니다. <a class="time-link" onclick="seek(679)"><span class="time-badge">11:19</span></a></li>
+                        <li><strong>이모지 및 공손한 표현:</strong> 코파일럿은 감정 자극에 반응하여 답변이 깊어집니다. <a class="time-link" onclick="seek(1060)"><span class="time-badge">17:40</span></a>, <a class="time-link" onclick="seek(1099)"><span class="time-badge">18:19</span></a></li>
                     </ul>
                     <h4>3. 핵심 요약 (프롬프트 4대 요소)</h4>
-                    <p>마이크로소프트에서 권장하는 좋은 프롬프트의 기본 구성은 다음과 같습니다. <a class="time-link" onclick="seek(1636)"><span class="time-badge">[16:36]</span></a></p>
                     <ul>
-                        <li>지시문(Instruction): 무엇을 할 것인가</li>
-                        <li>맥락(Context): 왜, 어떤 상황인가</li>
-                        <li>예시(Example/Source): 무엇을 참고할 것인가</li>
-                        <li>출력(Expectation): 어떤 결과물을 원하는가</li>
+                        <li>지시문(Instruction), 맥락(Context), 예시(Example), 출력(Expectation)을 명시하세요. <a class="time-link" onclick="seek(996)"><span class="time-badge">16:36</span></a></li>
                     </ul>
-                    <p>이 팁들을 활용하면 실제 업무 지원 도구로 코파일럿을 더 강력하게 사용할 수 있습니다. <a class="time-link" onclick="seek(803)"><span class="time-badge">[13:23]</span></a></p>
                 `
             },
             'B2s1oB36iCQ': {
-                title: "2026년 기준, 꼭 활용해야 할 마이크로소프트 코파일럿 팁과 유용한 기능 15가지",
-                hasKoreanAudio: true,
+                title: "15가지 생산성 팁 (2026)",
                 summary: `
-                    <div class="audio-notice-box">🤖한국어 음성을 지원하는 영상입니다. 만약 한국어 음성이 재생되지 않는다면 영상 하단 유튜브 로고를 통해 새창에서 유튜브 설정(⚙️), 오디오 트랙에서 한국어를 선택해주세요.</div>
-                    <h3>[2026년 기준, 꼭 활용해야 할 마이크로소프트 코파일럿 팁과 유용한 기능 15가지]</h3>
+                    <h3>상세 내용 요약</h3>
+                    <p>이 영상은 2026년 최신 업데이트를 반영한 마이크로소프트 코파일럿 활용 팁 15가지를 소개합니다.</p>
                     <h4>1. 코파일럿 앱 및 일반 설정</h4>
-                    <p>응답 모드 선택: '빠른 응답(Quick)'과 '심층 사고(Think Deeper)' 모드 중 선택할 수 있으며, 최신 모델인 GPT 5.2를 선택하여 사용할 수 있습니다. <a class="time-link" onclick="seek(39)"><span class="time-badge">[00:39]</span></a></p>
-                    <p>맞춤형 지침(Custom Instructions): 사용자의 직업, 선호하는 답변 스타일 등을 설정하여 모든 답변에 반영할 수 있습니다. <a class="time-link" onclick="seek(113)"><span class="time-badge">[01:53]</span></a></p>
-                    <p>프롬프트 스케줄링: 매주 월요일 아침 이메일 요약 요청 등 특정 시간에 프롬프트가 실행되도록 예약할 수 있습니다. <a class="time-link" onclick="seek(169)"><span class="time-badge">[02:49]</span></a></p>
-                    <p>AI 비디오 생성: 텍스트나 파워포인트를 기반으로 나레이션이 포함된 비디오를 생성하고 편집할 수 있습니다. <a class="time-link" onclick="seek(320)"><span class="time-badge">[05:20]</span></a></p>
-                    <h4>2. Outlook (아웃룩)</h4>
-                    <p>사후 요약: 휴가 후 밀린 이메일과 일정을 요약하고 우선순위 업무를 파악해 줍니다. <a class="time-link" onclick="seek(440)"><span class="time-badge">[07:20]</span></a></p>
-                    <p>답변 지침 설정: 이메일 답장 시 선호하는 톤(예: 정중하게, 유머러스하게)과 길이를 기본값으로 설정할 수 있습니다. <a class="time-link" onclick="seek(500)"><span class="time-badge">[08:20]</span></a></p>
-                    <h4>3. Excel (엑셀)</h4>
-                    <p>에이전트 모드(Agent Mode): 자연어로 대시보드 구축, 차트 생성, 데이터 정제를 수행합니다. <a class="time-link" onclick="seek(569)"><span class="time-badge">[09:29]</span></a></p>
-                    <p>코파일럿 함수: =COPILOT("프롬프트", 셀) 형태의 함수를 사용하여 감성 분석이나 웹 데이터 추출을 셀 단위에서 수행합니다. <a class="time-link" onclick="seek(711)"><span class="time-badge">[11:51]</span></a></p>
-                    <h4>4. PowerPoint (파워포인트)</h4>
-                    <p>전체 발표 자료 생성: 주제와 스타일만 정하면 개요부터 슬라이드 디자인까지 한 번에 생성합니다. <a class="time-link" onclick="seek(794)"><span class="time-badge">[13:14]</span></a></p>
-                    <p>AI 이미지 편집: 배경 제거, 화질 개선, 텍스트 삽입 등을 슬라이드 내에서 직접 수행합니다. <a class="time-link" onclick="seek(895)"><span class="time-badge">[14:55]</span></a></p>
-                    <h4>5. Word (워드)</h4>
-                    <p>문서 기반 생성: 기존 파일(예: PPT)을 참조하여 상태 보고서나 커버 레터를 작성하고, 표 형식으로 변환하거나 폰트 스타일을 일괄 변경합니다. <a class="time-link" onclick="seek(964)"><span class="time-badge">[16:04]</span></a></p>
-                    <h4>6. Teams (팀즈)</h4>
-                    <p>회의 중간 요약: 늦게 참석한 회의의 진행 상황, 할당된 작업 등을 실시간으로 파악할 수 있습니다. <a class="time-link" onclick="seek(1144)"><span class="time-badge">[19:04]</span></a></p>
-                    <p>그룹 채팅 내 코파일럿: 팀원들과의 그룹 채팅에 코파일럿을 초대하여 공동으로 일정을 짜거나 프롬프트를 실행할 수 있습니다. <a class="time-link" onclick="seek(1262)"><span class="time-badge">[21:02]</span></a></p>
-                    <h4>Table of Contents</h4>
                     <ul>
-                        <li><a class="time-link" onclick="seek(0)"><span class="time-badge">00:00</span></a> 소개</li>
-                        <li><a class="time-link" onclick="seek(37)"><span class="time-badge">00:37</span></a> Copilot 채팅 - 모드 전환 (모든 M365 고객)</li>
-                        <li><a class="time-link" onclick="seek(110)"><span class="time-badge">01:50</span></a> Copilot 채팅 - 사용자 지정 지침 (모든 M365 고객)</li>
-                        <li><a class="time-link" onclick="seek(167)"><span class="time-badge">02:47</span></a> Copilot 채팅 - 일정 안내 (모든 M365 고객)</li>
-                        <li><a class="time-link" onclick="seek(248)"><span class="time-badge">04:08</span></a> Core Copilot - 접지용 파일 사용 (모든 M365 고객)</li>
-                        <li><a class="time-link" onclick="seek(318)"><span class="time-badge">05:18</span></a> Core Copilot - AI를 이용한 비디오 제작 (모든 고객) (M365 고객)</li>
-                        <li><a class="time-link" onclick="seek(429)"><span class="time-badge">07:09</span></a> Outlook - 받은 편지함 및 일정 분석 (모든 M365 고객)</li>
-                        <li><a class="time-link" onclick="seek(498)"><span class="time-badge">08:18</span></a> Outlook - 사용자 지정 지침 (프리미엄 기능)</li>
-                        <li><a class="time-link" onclick="seek(568)"><span class="time-badge">09:28</span></a> Excel - 상담원 모드 (프리미엄 기능)</li>
-                        <li><a class="time-link" onclick="seek(709)"><span class="time-badge">11:49</span></a> Excel - Copilot 기능 (프리미엄 기능)</li>
-                        <li><a class="time-link" onclick="seek(792)"><span class="time-badge">13:12</span></a> PowerPoint - Copilot을 사용하여 프레젠테이션 만들기</li>
-                        <li><a class="time-link" onclick="seek(890)"><span class="time-badge">14:50</span></a> PowerPoint - AI를 사용한 이미지 편집</li>
-                        <li><a class="time-link" onclick="seek(957)"><span class="time-badge">15:57</span></a> Word - 상담원 모드 (프리미엄 기능)</li>
-                        <li><a class="time-link" onclick="seek(1070)"><span class="time-badge">17:50</span></a> Word - 문서 초안 작성 및 편집</li>
-                        <li><a class="time-link" onclick="seek(1142)"><span class="time-badge">19:02</span></a> Teams - 회의 요약</li>
-                        <li><a class="time-link" onclick="seek(1260)"><span class="time-badge">21:00</span></a> Teams - Copilot을 사용한 그룹 채팅</li>
+                        <li><strong>응답 모드 선택:</strong> 'Quick'과 'Think Deeper' 모드 및 GPT 5.2 선택 가능. <a class="time-link" onclick="seek(39)"><span class="time-badge">00:39</span></a></li>
+                        <li><strong>프롬프트 스케줄링:</strong> 특정 시간에 프롬프트가 실행되도록 예약. <a class="time-link" onclick="seek(169)"><span class="time-badge">02:49</span></a></li>
                     </ul>
+                    <h4>2. 앱별 주요 기능</h4>
+                    <ul>
+                        <li><strong>Excel 코파일럿 함수:</strong> =COPILOT 함수로 셀 단위 데이터 가공. <a class="time-link" onclick="seek(711)"><span class="time-badge">11:51</span></a></li>
+                        <li><strong>Teams 회의 요약:</strong> 실시간 진행 상황 및 작업 할당 요약. <a class="time-link" onclick="seek(1144)"><span class="time-badge">19:04</span></a></li>
+                    </ul>
+                    <p style="margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; background: rgba(0,122,255,0.1); border: 1px solid rgba(0,122,255,0.2); font-weight: bold; color: #007AFF;">
+                        코파일럿 일반과 프리미엄 기능이 영상 설명 페이지 하단에 디테일하게 구분 되어 있음 <a class="time-link" onclick="seek(28)"><span class="time-badge">00:28</span></a>
+                    </p>
                 `
             },
             'EZqY_mnHfTI': {
                 title: "프롬프트 엔지니어링 기법 총정리",
                 summary: `
-                    <h3>[프롬프트 엔지니어링 기법 총정리]</h3>
-                    <h4>1. 핵심 설정값 (Sampling Control)</h4>
-                    <p>모델이 답변을 생성하는 방식을 제어하는 세 가지 주요 변수입니다. <a class="time-link" onclick="seek(256)"><span class="time-badge">[04:16]</span></a></p>
-                    <p>Temperature (온도): 0에 가까울수록 일관되고 확실한 답변을, 1에 가까울수록 창의적 답변을 생성합니다. 수학 문제 등은 0 권장. <a class="time-link" onclick="seek(278)"><span class="time-badge">[04:38]</span></a></p>
-                    <p>Top K: 상위 K개의 후보군 중에서만 선택하여 신뢰도를 조절합니다. <a class="time-link" onclick="seek(305)"><span class="time-badge">[05:05]</span></a></p>
-                    <p>Top P (Nucleus Sampling): 누적 확률이 P값 이내인 토큰들만 샘플링에 포함합니다. <a class="time-link" onclick="seek(365)"><span class="time-badge">[06:05]</span></a></p>
-                    <p>기본 권장값: Temperature 0.2, Top P 0.95, Top K 35 내외로 시작하는 것이 효과적입니다. <a class="time-link" onclick="seek(472)"><span class="time-badge">[07:52]</span></a></p>
-                    <h4>2. 주요 프롬프트 기법</h4>
-                    <p>Zero-shot / Few-shot: 예시 제공 유무에 따른 성능 차이 및 고품질 예시 활용법. <a class="time-link" onclick="seek(519)"><span class="time-badge">[08:39]</span></a>, <a class="time-link" onclick="seek(584)"><span class="time-badge">[09:44]</span></a></p>
-                    <p>Chain of Thought (CoT): "단계별로 생각해보자"라는 문구를 통해 모델의 논리력을 강화합니다. <a class="time-link" onclick="seek(1007)"><span class="time-badge">[16:47]</span></a></p>
-                    <p>Self-Consistency: 동일한 질문에 대해 여러 번 답변을 생성한 후 최적의 결과를 선택합니다. <a class="time-link" onclick="seek(1140)"><span class="time-badge">[19:00]</span></a></p>
-                    <p>React (Reasoning + Acting): 에이전트 모델에서 '생각-행동-관찰'을 반복하며 문제를 해결합니다. <a class="time-link" onclick="seek(1312)"><span class="time-badge">[21:52]</span></a></p>
-                    <p>Step-back Prompting: 배경 지식을 먼저 생성하게 하여 최종 답변을 도출하는 방식입니다. <a class="time-link" onclick="seek(867)"><span class="time-badge">[14:27]</span></a></p>
-                    <h4>3. 프롬프트 작성을 위한 꿀팁</h4>
+                    <h3>상세 내용 요약</h3>
+                    <p>구글 프롬프트 엔지니어링 백서를 바탕으로 답변 품질을 높이기 위한 기법과 설정값을 설명합니다.</p>
+                    <h4>1. 핵심 설정값</h4>
                     <ul>
-                        <li>동사 위주의 명확한 지시: 'Act', 'Analyze' 등 직관적인 동사를 사용하세요. <a class="time-link" onclick="seek(1750)"><span class="time-badge">[29:10]</span></a></li>
-                        <li>부정문보다는 긍정문: "~하지 마"보다 "~해라"는 지시에 더 잘 반응합니다. <a class="time-link" onclick="seek(1814)"><span class="time-badge">[30:14]</span></a></li>
-                        <li>출력 형식 지정: JSON이나 XML 형태로 답변을 요구하면 데이터 파싱이 용이합니다. <a class="time-link" onclick="seek(1942)"><span class="time-badge">[32:22]</span></a></li>
-                    </ul>
-                    <h4>Table of Contents</h4>
-                    <ul>
-                        <li><a class="time-link" onclick="seek(0)"><span class="time-badge">00:00</span></a> 인트로</li>
-                        <li><a class="time-link" onclick="seek(148)"><span class="time-badge">02:28</span></a> Model Configuration (Temperature, Top-K, Top-P)</li>
-                        <li><a class="time-link" onclick="seek(520)"><span class="time-badge">08:40</span></a> Zero Shot prompting</li>
-                        <li><a class="time-link" onclick="seek(556)"><span class="time-badge">09:16</span></a> Few Shot prompting</li>
-                        <li><a class="time-link" onclick="seek(695)"><span class="time-badge">11:35</span></a> System, Context, Role prompting</li>
-                        <li><a class="time-link" onclick="seek(860)"><span class="time-badge">14:20</span></a> Step-back Prompting</li>
-                        <li><a class="time-link" onclick="seek(997)"><span class="time-badge">16:37</span></a> Chain of Thought</li>
-                        <li><a class="time-link" onclick="seek(1103)"><span class="time-badge">18:23</span></a> Self-consistency</li>
-                        <li><a class="time-link" onclick="seek(1250)"><span class="time-badge">20:50</span></a> Tree of Thoughts</li>
-                        <li><a class="time-link" onclick="seek(1312)"><span class="time-badge">21:52</span></a> ReAct</li>
-                        <li><a class="time-link" onclick="seek(1466)"><span class="time-badge">24:26</span></a> Automatic Prompt Engineering (APE)</li>
-                        <li><a class="time-link" onclick="seek(1598)"><span class="time-badge">26:38</span></a> Code Prompting</li>
-                        <li><a class="time-link" onclick="seek(1673)"><span class="time-badge">27:53</span></a> 마지막 꿀팁들</li>
+                        <li><strong>Temperature (온도):</strong> 창의성 조절. 수학 정답 등은 0으로 설정. <a class="time-link" onclick="seek(256)"><span class="time-badge">04:16</span></a></li>
+                        <li><strong>Chain of Thought (CoT):</strong> "단계별로 생각해보자" 유도. <a class="time-link" onclick="seek(1007)"><span class="time-badge">16:47</span></a></li>
+                        <li><strong>React 기법:</strong> 생각-행동-관찰의 반복 사이클 해결법. <a class="time-link" onclick="seek(1312)"><span class="time-badge">21:52</span></a></li>
                     </ul>
                 `
             },
             'zs5_XRdcvbk': {
                 title: "상위 0.1% 사고형 AI 활용법",
                 summary: `
-                    <h3>[상위 0.1% 사고형 AI 활용법]</h3>
-                    <h4>1. 생각의 트리 (Tree of Thoughts)</h4>
-                    <p>개념: 여러 전략을 동시에 전개하고 스스로 비교·평가하여 최적의 안을 선택하게 하는 방식입니다. <a class="time-link" onclick="seek(129)"><span class="time-badge">[02:09]</span></a></p>
-                    <p>효과: 복잡한 수학 퍼즐 해결 능력이 기존 4%에서 74%까지 폭발적으로 향상됩니다. <a class="time-link" onclick="seek(166)"><span class="time-badge">[02:46]</span></a></p>
-                    <p>활용: "세 가지 전략을 동시에 제시하고, 장단점을 평가해 최종안을 골라줘" <a class="time-link" onclick="seek(138)"><span class="time-badge">[02:18]</span></a></p>
-                    <h4>2. 자기 성찰 (Self-Reflection)</h4>
-                    <p>개념: AI가 내놓은 결과물을 스스로 검토하고 비판하여 개선하도록 루프를 만드는 기법입니다. <a class="time-link" onclick="seek(187)"><span class="time-badge">[03:07]</span></a></p>
-                    <p>효과: 코딩 분야 등에서 정확도를 비약적으로 높이는 효과가 있습니다. <a class="time-link" onclick="seek(234)"><span class="time-badge">[03:54]</span></a></p>
-                    <p>활용: "네가 쓴 글을 다시 읽고 논리적 약점을 지적한 뒤 수정된 최종본을 줘" <a class="time-link" onclick="seek(206)"><span class="time-badge">[03:26]</span></a></p>
-                    <h4>3. 메타 프롬프팅 (Meta-Prompting)</h4>
-                    <p>개념: AI에게 사용자의 목적에 맞는 최적의 프롬프트를 직접 제작하도록 시키는 것입니다. <a class="time-link" onclick="seek(244)"><span class="time-badge">[04:04]</span></a></p>
-                    <p>효과: 인간이 만든 프롬프트보다 성능이 최대 50% 높고 고민 시간은 단축됩니다. <a class="time-link" onclick="seek(270)"><span class="time-badge">[04:30]</span></a></p>
-                    <h4>4. RAG 및 ReAct</h4>
-                    <p>개념: 실시간 데이터 검색(RAG) 및 도구 활용을 통한 에이전트 방식(ReAct). <a class="time-link" onclick="seek(291)"><span class="time-badge">[04:51]</span></a>, <a class="time-link" onclick="seek(355)"><span class="time-badge">[05:55]</span></a></p>
+                    <h3>상세 내용 요약</h3>
+                    <p>최신 AI 모델의 성능을 극대화하기 위한 5가지 심화 프롬프트 기법을 소개합니다.</p>
+                    <h4>1. 핵심 사고형 기법</h4>
+                    <ul>
+                        <li><strong>생각의 트리(ToT):</strong> 여러 전략을 동시에 전개해 최적안 선택. <a class="time-link" onclick="seek(129)"><span class="time-badge">02:09</span></a></li>
+                        <li><strong>자기 성찰(Reflection):</strong> 결과물을 스스로 비판하고 수정. <a class="time-link" onclick="seek(187)"><span class="time-badge">03:07</span></a></li>
+                        <li><strong>메타 프롬프팅:</strong> 최적의 프롬프트를 AI에게 직접 제작 요청. <a class="time-link" onclick="seek(244)"><span class="time-badge">04:04</span></a></li>
+                    </ul>
                 `
             },
             'ilNf1-wwITU': {
                 title: "프롬프트 코치 마스터클래스",
-                hasKoreanAudio: true,
                 summary: `
-                    <div class="audio-notice-box">🤖한국어 음성을 지원하는 영상입니다. 만약 한국어 음성이 재생되지 않는다면 영상 하단 유튜브 로고를 통해 새창에서 유튜브 설정(⚙️), 오디오 트랙에서 한국어를 선택해주세요.</div>
-                    <h3>[프롬프트 코치 마스터클래스]</h3>
-                    <h4>1. 프롬프트 코치(Prompt Coach)란?</h4>
-                    <p>위치: m365copilot.com '에이전트 탐색' 메뉴에서 Microsoft 제작 'Prompt Coach'를 찾아 추가 가능. <a class="time-link" onclick="seek(32)"><span class="time-badge">[00:32]</span></a></p>
-                    <p>주요 기능: 프롬프트 생성, 개선(Fix my prompt), 효과적인 작성법 교육. <a class="time-link" onclick="seek(113)"><span class="time-badge">[01:53]</span></a>, <a class="time-link" onclick="seek(152)"><span class="time-badge">[02:32]</span></a></p>
-                    <h4>2. 효과적인 프롬프트의 4대 요소</h4>
-                    <p>목표(Goal), 맥락(Context), 소스(Source), 기대 사항(Expectations)을 확인해 줍니다. <a class="time-link" onclick="seek(171)"><span class="time-badge">[02:51]</span></a></p>
-                    <h4>3. 실전 활용 사례</h4>
-                    <p>문서 요약: 전략적 조언을 포함한 구체적인 체계로 변환하여 실행. <a class="time-link" onclick="seek(365)"><span class="time-badge">[06:05]</span></a></p>
-                    <p>역할 전환: 특정 전문가 역할로 전환시키는 정교한 프롬프트 생성 및 저장. <a class="time-link" onclick="seek(578)"><span class="time-badge">[09:38]</span></a></p>
-                    <h4>Contents 📚</h4>
+                    <h3>상세 내용 요약</h3>
+                    <p>마이크로소프트의 'Prompt Coach' 에이전트를 사용하여 효과적인 프롬프트를 작성하는 방법을 설명합니다.</p>
+                    <h4>1. 프롬프트 코치 활용</h4>
                     <ul>
-                        <li><a class="time-link" onclick="seek(0)"><span class="time-badge">00:00</span></a> - Intro</li>
-                        <li><a class="time-link" onclick="seek(24)"><span class="time-badge">00:24</span></a> - Install Prompt Coach</li>
-                        <li><a class="time-link" onclick="seek(59)"><span class="time-badge">00:59</span></a> - Cant see Prompt Coach?</li>
-                        <li><a class="time-link" onclick="seek(83)"><span class="time-badge">01:23</span></a> - Add Prompt Coach</li>
-                        <li><a class="time-link" onclick="seek(104)"><span class="time-badge">01:44</span></a> - capabilities</li>
-                        <li><a class="time-link" onclick="seek(180)"><span class="time-badge">03:00</span></a> - How to use</li>
-                        <li><a class="time-link" onclick="seek(280)"><span class="time-badge">04:40</span></a> - Using @ shortcut</li>
-                        <li><a class="time-link" onclick="seek(337)"><span class="time-badge">05:37</span></a> - Improve Summary</li>
-                        <li><a class="time-link" onclick="seek(490)"><span class="time-badge">08:10</span></a> - Prompts for multiple targets</li>
-                        <li><a class="time-link" onclick="seek(573)"><span class="time-badge">09:33</span></a> - Role Change Prompts</li>
-                        <li><a class="time-link" onclick="seek(756)"><span class="time-badge">12:36</span></a> - Multiple points of view</li>
-                        <li><a class="time-link" onclick="seek(816)"><span class="time-badge">13:36</span></a> - Use Dictation</li>
-                        <li><a class="time-link" onclick="seek(839)"><span class="time-badge">13:59</span></a> - Summary</li>
+                        <li><strong>위치 및 기능:</strong> m365copilot.com '에이전트 탐색' 메뉴에서 추가. <a class="time-link" onclick="seek(32)"><span class="time-badge">00:32</span></a></li>
+                        <li><strong>실전 팁:</strong> 역할 전환 및 음성 딕테이션을 통한 정교한 프롬프트 생성. <a class="time-link" onclick="seek(578)"><span class="time-badge">09:38</span></a>, <a class="time-link" onclick="seek(820)"><span class="time-badge">13:40</span></a></li>
                     </ul>
                 `
             }
         };
 
-        let currentId = '';
+        let currentVideoId = '';
 
         function openPlayer(id) {
-            currentId = id;
+            currentVideoId = id;
             const data = videoData[id];
-            if (!data) return;
+            const playerArea = document.getElementById('video-player-area');
+            const bodyArea = document.getElementById('modal-body');
+            const overlay = document.getElementById('modal-overlay');
+            const fallback = document.getElementById('fallback-link');
 
-            const modalOverlay = document.getElementById('modal-overlay');
-            const iframeSlot = document.getElementById('iframe-slot');
-            const modalBody = document.getElementById('modal-body');
-            const ytExtBtn = document.getElementById('yt-external-btn');
-
-            iframeSlot.innerHTML = `<iframe id="main-frame" src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&hl=ko&cc_lang_pref=ko&lr=lang_ko&cc_load_policy=1&persist_hl=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            // youtube-nocookie.com 도메인을 사용하여 오류 153 방지 시도
+            playerArea.innerHTML = `<iframe id="yt-player" src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             
-            if (data.hasKoreanAudio) {
-                ytExtBtn.style.display = 'flex';
-                ytExtBtn.href = `https://www.youtube.com/watch?v=${id}`;
-            } else {
-                ytExtBtn.style.display = 'none';
-            }
+            fallback.href = `https://www.youtube.com/watch?v=${id}`;
+            fallback.style.display = 'block';
 
-            modalBody.innerHTML = `
-                <p class="text-gradient font-black text-xs uppercase tracking-widest mb-1">Detailed Insight</p>
-                <h3>${data.title}</h3>
-                <div class="video-summary-content">${data.summary}</div>
+            bodyArea.innerHTML = `
+                <p class="text-gradient font-black text-sm uppercase tracking-widest mb-2">Video Summary</p>
+                <h2 class="text-3xl md:text-5xl font-black text-white mb-8">${data.title}</h2>
+                ${data.summary}
             `;
 
-            modalOverlay.style.display = 'flex';
+            overlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
 
         function closePlayer() {
-            document.getElementById('iframe-slot').innerHTML = '';
+            document.getElementById('video-player-area').innerHTML = '<a id="fallback-link" href="#" target="_blank">재생 오류 시: 유튜브에서 직접 보기</a>';
             document.getElementById('modal-overlay').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
 
         function seek(seconds) {
-            const frame = document.getElementById('main-frame');
-            if (frame) {
-                frame.src = `https://www.youtube-nocookie.com/embed/${currentId}?autoplay=1&start=${seconds}&rel=0&hl=ko&cc_lang_pref=ko&lr=lang_ko&cc_load_policy=1&persist_hl=1`;
+            const player = document.getElementById('yt-player');
+            if (player) {
+                // youtube-nocookie 도메인 유지하며 시간 이동
+                player.src = `https://www.youtube-nocookie.com/embed/${currentVideoId}?autoplay=1&start=${seconds}&rel=0`;
             }
         }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section, .glass-card').forEach(el => {
+            el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-8');
+            observer.observe(el);
+        });
     </script>
 </body>
 </html>
